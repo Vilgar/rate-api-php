@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RateApi;
 
 /**
@@ -18,21 +20,4 @@ class RateApiException extends \RuntimeException
         $this->errorType = $errorType;
         $this->requestId = $requestId;
     }
-}
-
-/** Thrown on HTTP 429; carries retryAfter (seconds). */
-class RateLimitException extends RateApiException
-{
-    public int $retryAfter;
-
-    public function __construct(string $message = '', int $code = 429, ?string $errorType = null, ?string $requestId = null, int $retryAfter = 60)
-    {
-        parent::__construct($message, $code, $errorType, $requestId);
-        $this->retryAfter = $retryAfter;
-    }
-}
-
-/** Thrown when a request times out. */
-class RateApiTimeoutException extends RateApiException
-{
 }

@@ -5,8 +5,15 @@
     "license": "MIT",
     "homepage": "https://rate-api.com",
     "keywords": ["exchange-rate", "currency", "forex", "crypto", "api", "rate-api"],
+    "authors": [
+        {
+            "name": "Vilgar",
+            "email": "digitalbrainsllc@gmail.com",
+            "role": "Developer"
+        }
+    ],
     "require": {
-        "php": ">=8.0",
+        "php": "^8.0",
         "ext-curl": "*",
         "ext-json": "*"
     },
