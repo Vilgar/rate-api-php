@@ -3,6 +3,11 @@
 All notable changes to `rate-api/rate-api-php` are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-06-17
+
+### Changed
+- Updated the package author contact email.
+
 ## [1.0.1] - 2026-06-17
 
 ### Fixed
