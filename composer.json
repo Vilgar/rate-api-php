@@ -1,0 +1,23 @@
+{
+    "name": "rate-api/rate-api-php",
+    "description": "Official PHP client for the Rate-API.com exchange-rate & crypto API",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://rate-api.com",
+    "keywords": ["exchange-rate", "currency", "forex", "crypto", "api", "rate-api"],
+    "require": {
+        "php": ">=8.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "RateApi\\": "src/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/Vilgar/rate-api-php/issues",
+        "source": "https://github.com/Vilgar/rate-api-php",
+        "docs": "https://rate-api.com/en/docs"
+    }
+}
