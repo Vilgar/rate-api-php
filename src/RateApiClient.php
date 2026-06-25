@@ -51,22 +51,6 @@ class RateApiClient
         return $this->get('pair/' . rawurlencode($from) . '/' . rawurlencode($to));
     }
 
-    /** Time series between two dates (Business+). Max 366 days. */
-    public function timeseries(string $startDate, string $endDate, string $base = 'USD', array $symbols = []): array
-    {
-        return $this->get('timeseries', $this->symbolsQuery([
-            'start_date' => $startDate, 'end_date' => $endDate, 'base' => $base,
-        ], $symbols));
-    }
-
-    /** Fluctuation between two dates (Business+). */
-    public function fluctuation(string $startDate, string $endDate, string $base = 'USD', array $symbols = []): array
-    {
-        return $this->get('fluctuation', $this->symbolsQuery([
-            'start_date' => $startDate, 'end_date' => $endDate, 'base' => $base,
-        ], $symbols));
-    }
-
     /** Top cryptocurrency prices in USD (Pro+). */
     public function crypto(array $symbols = []): array
     {
@@ -80,58 +64,44 @@ class RateApiClient
         return $this->get('currencies');
     }
 
+    /** This key's current-month usage vs. its plan quota. */
+    public function usage(): array
+    {
+        return $this->get('usage');
+    }
+
+    /** Lean plan-quota / remaining-requests view. */
+    public function quota(): array
+    {
+        return $this->get('quota');
+    }
+
+    /** List rate alerts on this key (Business+). */
+    public function listAlerts(): array
+    {
+        return $this->get('alerts');
+    }
+
+    /** Create a rate alert (Business+). $notifyUrl is an optional signed webhook target. */
+    public function createAlert(string $from, string $to, string $direction, float $threshold, ?string $notifyUrl = null): array
+    {
+        $payload = ['from' => $from, 'to' => $to, 'direction' => $direction, 'threshold' => $threshold];
+        if ($notifyUrl !== null) {
+            $payload['notify_url'] = $notifyUrl;
+        }
+        return $this->request($this->baseUrl . '/' . $this->apiKey . '/alerts', [], 'POST', $payload);
+    }
+
+    /** Delete a rate alert by id (Business+). */
+    public function deleteAlert(int $id): array
+    {
+        return $this->request($this->baseUrl . '/' . $this->apiKey . '/alerts/' . rawurlencode((string) $id), [], 'DELETE');
+    }
+
     /** Public service health (no key needed, but sent anyway). */
     public function health(): array
     {
         return $this->getPublic('health');
-    }
-
-    // ---- v2 endpoints (resolve to /api/v2 regardless of the configured base) ----
-
-    private function v2Base(): string
-    {
-        if (str_ends_with($this->baseUrl, '/v1')) {
-            return substr($this->baseUrl, 0, -3) . '/v2';
-        }
-        return str_replace('/v1/', '/v2/', $this->baseUrl);
-    }
-
-    /** v2 latest with metadata / 24h change / precision options (Pro+ for change). */
-    public function latestV2(string $base = 'USD', array $symbols = [], array $opts = []): array
-    {
-        $query = $this->symbolsQuery(['base' => $base], $symbols);
-        if (!empty($opts['include_metadata'])) {
-            $query['include_metadata'] = 'true';
-        }
-        if (!empty($opts['include_change'])) {
-            $query['include_change'] = 'true';
-        }
-        if (isset($opts['precision'])) {
-            $query['precision'] = $opts['precision'];
-        }
-        return $this->request($this->v2Base() . '/' . $this->apiKey . '/latest', $query);
-    }
-
-    /** v2 historical with an optional compareDate -> per-currency deltas (Pro+). */
-    public function historicalCompare(string $date, ?string $compareDate = null, string $base = 'USD', array $symbols = []): array
-    {
-        $query = $this->symbolsQuery(['date' => $date, 'base' => $base], $symbols);
-        if ($compareDate) {
-            $query['compare_date'] = $compareDate;
-        }
-        return $this->request($this->v2Base() . '/' . $this->apiKey . '/historical', $query);
-    }
-
-    /** v2 batch conversion: array of ['from'=>,'to'=>,'amount'=>] (Pro+). Max 100. */
-    public function batchConvert(array $conversions): array
-    {
-        return $this->request($this->v2Base() . '/' . $this->apiKey . '/batch-convert', [], 'POST', $conversions);
-    }
-
-    /** List your configured rate alerts (Business+). Manage them in the dashboard. */
-    public function alerts(): array
-    {
-        return $this->request($this->v2Base() . '/' . $this->apiKey . '/alerts', []);
     }
 
     private function symbolsQuery(array $query, array $symbols): array

@@ -3,6 +3,17 @@
 All notable changes to `rate-api/rate-api-php` are documented here.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-06-25
+
+### Added
+- **Rate alerts** (Business+): `listAlerts()`, `createAlert()` and `deleteAlert()`
+  for managing threshold alerts on a currency pair.
+
+### Changed
+- Aligned the client with the current API surface: added `usage()` and `quota()`,
+  and removed endpoints no longer offered (timeseries/fluctuation/batch-convert).
+  Brings the PHP client to parity with the JS, Python and MCP SDKs at 1.0.4.
+
 ## [1.0.2] - 2026-06-17
 
 ### Changed

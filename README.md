@@ -38,16 +38,17 @@ $pair = $client->pair('USD', 'EUR');
 // Historical (Pro+)
 $hist = $client->historical('2026-01-15', 'USD', ['EUR']);
 
-// Time series & fluctuation (Business+)
-$series = $client->timeseries('2026-01-01', '2026-01-31', 'USD', ['EUR']);
-$flux   = $client->fluctuation('2026-01-01', '2026-01-31');
-
 // Crypto (Pro+)
 $crypto = $client->crypto(['BTC', 'ETH']);
+
+// Usage vs. quota for this key
+$usage = $client->usage();
 
 // Public health (no plan needed)
 $health = $client->health();
 ```
+
+Methods: `latest` · `convert` · `pair` · `historical` · `crypto` · `currencies` · `usage` · `quota` · `health`
 
 ## Errors
 
@@ -66,37 +67,15 @@ use RateApi\RateApiException;
 use RateApi\RateLimitException;
 
 try {
-    $client->timeseries('2026-01-01', '2026-12-31');
+    $client->convert('USD', 'ZZZ', 100);
 } catch (RateLimitException $e) {
     sleep($e->retryAfter);          // honour the server's backoff
 } catch (RateApiException $e) {
-    echo $e->getMessage();          // e.g. "Date range too large. Maximum is 366 days."
+    echo $e->getMessage();          // e.g. "Invalid target currency"
     echo $e->getCode();             // e.g. 400
-    echo $e->errorType;             // e.g. "date_range_too_large"
+    echo $e->errorType;             // e.g. "invalid_target_currency"
     echo $e->requestId;             // quote this when contacting support
 }
-```
-
-## v2 features
-
-The client exposes the v2 endpoints directly (they resolve to `/api/v2` regardless of base URL):
-
-```php
-// Latest with 24h change, metadata and precision
-$r = $client->latestV2('USD', ['EUR', 'GBP'], ['include_change' => true, 'include_metadata' => true, 'precision' => 4]);
-echo $r['changes_pct']['EUR'];
-
-// Historical comparison between two dates (Pro+)
-$cmp = $client->historicalCompare('2026-01-15', '2026-01-01', 'USD', ['EUR']);
-
-// Batch conversion — up to 100 pairs in one call (Pro+)
-$batch = $client->batchConvert([
-    ['from' => 'USD', 'to' => 'EUR', 'amount' => 100],
-    ['from' => 'GBP', 'to' => 'JPY', 'amount' => 50],
-]);
-
-// Your configured rate alerts (Business+)
-$alerts = $client->alerts();
 ```
 
 ## Authentication
